@@ -17,13 +17,18 @@ type (
 )
 
 type Commands struct {
+	command
 	preperations []prep
 }
 
 var globalCommand Commands
 
 func (c *Commands) Register[T any](short, long string, fn func(T) error, subs ...string) error {
-	return nil
+	if !isStruct(reflect.TypeFor[T]()) {
+		return ErrFlagStructRequired
+	}
+
+	return c.command.Register(short, long, fn, subs...)
 }
 
 func (c *Commands) Prepare[T, U any](fn func(T) (U, error)) error {
