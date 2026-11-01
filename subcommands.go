@@ -1,5 +1,7 @@
 package subcommands
 
+import "os"
+
 type (
 	Required  struct{}
 	Mutual    struct{}
@@ -10,7 +12,7 @@ type (
 	AnyOf     struct{}
 )
 
-type Commands struct {}
+type Commands struct{}
 
 var globalCommand Commands
 
@@ -23,6 +25,10 @@ func (c *Commands) Prepare[T, U any](fn func(T) (U, error)) error {
 }
 
 func (c *Commands) Run() error {
+	return c.RunWithArgs(os.Args)
+}
+
+func (c *Commands) RunWithArgs(args []string) error {
 	return nil
 }
 
@@ -35,5 +41,9 @@ func Prepare[T, U any](fn func(T) (U, error)) error {
 }
 
 func Run() error {
-	return c.Run()
+	return globalCommand.RunWithArgs(os.Args)
+}
+
+func RunWithArgs(args []string) error {
+	return globalCommand.RunWithArgs(args)
 }
