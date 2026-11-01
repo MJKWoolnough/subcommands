@@ -1,4 +1,5 @@
-package subcommands
+// Package subcommands allows for simple subcommand and flag parsing.
+package subcommands // import "vimagination.zapto.org/subcommands"
 
 import (
 	"os"
