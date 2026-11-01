@@ -1,6 +1,10 @@
 package subcommands
 
-import "os"
+import (
+	"errors"
+	"os"
+	"reflect"
+)
 
 type (
 	Required  struct{}
@@ -12,7 +16,9 @@ type (
 	AnyOf     struct{}
 )
 
-type Commands struct{}
+type Commands struct {
+	preperations []prep
+}
 
 var globalCommand Commands
 
@@ -21,6 +27,18 @@ func (c *Commands) Register[T any](short, long string, fn func(T) error, subs ..
 }
 
 func (c *Commands) Prepare[T, U any](fn func(T) (U, error)) error {
+	p := prep{
+		flags:  reflect.TypeFor[T](),
+		result: reflect.TypeFor[U](),
+		fn:     reflect.ValueOf(fn),
+	}
+
+	if !isStruct(p.flags) {
+		return ErrFlagStructRequired
+	}
+
+	c.preperations = append(c.preperations, p)
+
 	return nil
 }
 
@@ -47,3 +65,5 @@ func Run() error {
 func RunWithArgs(args []string) error {
 	return globalCommand.RunWithArgs(args)
 }
+
+var ErrFlagStructRequired = errors.New("flag type must be a struct")
