@@ -23,6 +23,10 @@ type flags struct {
 }
 
 func (f *flags) process(typ reflect.Type, level int) error {
+	if f.flags == nil {
+		f.flags = make(map[string]*flagData)
+	}
+
 	if typ.Kind() == reflect.Pointer {
 		typ = typ.Elem()
 	}
