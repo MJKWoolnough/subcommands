@@ -45,16 +45,16 @@ func TestFlagsProcess(t *testing.T) {
 		Output map[string]*flagData
 		Err    error
 	}{
-		{
+		{ // 1
 			Input:  int(0),
 			Output: map[string]*flagData{},
 			Err:    ErrFlagStructRequired,
 		},
-		{
+		{ // 2
 			Input:  struct{}{},
 			Output: map[string]*flagData{},
 		},
-		{
+		{ // 3
 			Input: struct {
 				FlagA string
 			}{},
@@ -66,7 +66,7 @@ func TestFlagsProcess(t *testing.T) {
 				},
 			},
 		},
-		{
+		{ // 4
 			Input: &struct {
 				FlagA string
 				FlagB int
@@ -84,7 +84,7 @@ func TestFlagsProcess(t *testing.T) {
 				},
 			},
 		},
-		{
+		{ // 5
 			Input: &struct {
 				FlagA string
 				flagB int
@@ -97,7 +97,7 @@ func TestFlagsProcess(t *testing.T) {
 				},
 			},
 		},
-		{
+		{ // 6
 			Input: struct {
 				FlagA string `flags:"--aaa"`
 			}{},
@@ -109,7 +109,7 @@ func TestFlagsProcess(t *testing.T) {
 				},
 			},
 		},
-		{
+		{ // 7
 			Input: struct {
 				FlagA string `flags:"--aaa,--bbb"`
 			}{},
@@ -118,7 +118,7 @@ func TestFlagsProcess(t *testing.T) {
 				"--bbb": aliased,
 			},
 		},
-		{
+		{ // 8
 			Input: struct {
 				FlagA string
 				Global
@@ -136,7 +136,7 @@ func TestFlagsProcess(t *testing.T) {
 				},
 			},
 		},
-		{
+		{ // 9
 			Input: struct {
 				FlagA string
 				Sub
@@ -159,7 +159,7 @@ func TestFlagsProcess(t *testing.T) {
 				},
 			},
 		},
-		{
+		{ // 10
 			Input: struct {
 				FlagA *customFlag
 			}{},
@@ -171,7 +171,7 @@ func TestFlagsProcess(t *testing.T) {
 				},
 			},
 		},
-		{
+		{ // 11
 			Input: struct {
 				FlagA customFlag
 			}{},
@@ -183,7 +183,7 @@ func TestFlagsProcess(t *testing.T) {
 				},
 			},
 		},
-		{
+		{ // 12
 			Input: struct {
 				FlagA string `default:"123"`
 			}{},
@@ -196,7 +196,7 @@ func TestFlagsProcess(t *testing.T) {
 				},
 			},
 		},
-		{
+		{ // 13
 			Input: struct {
 				FlagA string
 				FlagB string `flags:"--flaga"`
@@ -210,7 +210,7 @@ func TestFlagsProcess(t *testing.T) {
 			},
 			Err: ErrAmbiguousFlags,
 		},
-		{
+		{ // 14
 			Input: struct {
 				FlagA error
 				FlagB func()
@@ -225,7 +225,7 @@ func TestFlagsProcess(t *testing.T) {
 				},
 			},
 		},
-		{
+		{ // 15
 			Input: struct {
 				FlagA int `flags:"--globalflag"`
 				Global
@@ -238,7 +238,7 @@ func TestFlagsProcess(t *testing.T) {
 				},
 			},
 		},
-		{
+		{ // 16
 			Input: struct {
 				Global
 				FlagA int `flags:"--globalflag"`
@@ -251,7 +251,7 @@ func TestFlagsProcess(t *testing.T) {
 				},
 			},
 		},
-		{
+		{ // 17
 			Input: struct {
 				time.Duration
 			}{},
