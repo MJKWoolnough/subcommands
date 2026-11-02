@@ -63,7 +63,7 @@ func (f *flags) process(typ reflect.Type, level int) error {
 			for _, alias := range g.aliases {
 				if e, ok := f.flags[alias]; ok && e.depth == level {
 					return fmt.Errorf("%w: %s", ErrAmbiguousFlags, alias)
-				} else if e.depth < level {
+				} else if ok && e.depth < level {
 					continue
 				}
 
