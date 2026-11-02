@@ -27,7 +27,7 @@ func (f *flags) process(typ reflect.Type, level int) error {
 		typ = typ.Elem()
 	}
 
-	if typ.Kind() == reflect.Struct {
+	if typ.Kind() != reflect.Struct {
 		return ErrFlagStructRequired
 	}
 
