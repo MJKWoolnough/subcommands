@@ -5,6 +5,7 @@ import (
 	"flag"
 	"fmt"
 	"reflect"
+	"strings"
 )
 
 var flagI = reflect.TypeFor[flag.Value]()
@@ -53,10 +54,7 @@ func (f *flags) process(typ reflect.Type, level int) error {
 
 			fallthrough
 		default:
-			g, err := parseFlag(field.Name, field.Type)
-			if err != nil {
-				return err
-			}
+			g := parseFlag(field.Name, field, level)
 
 			for _, alias := range g.aliases {
 				if e, ok := f.flags[alias]; ok && e.depth == level {
@@ -73,8 +71,24 @@ func (f *flags) process(typ reflect.Type, level int) error {
 	return nil
 }
 
-func parseFlag(name string, t reflect.Type) (*flagData, error) {
-	return nil, nil
+func parseFlag(name string, t reflect.StructField, level int) *flagData {
+	fd := &flagData{
+		depth: level,
+		typ:   t.Type,
+		index: t.Index,
+	}
+
+	if aliases, ok := t.Tag.Lookup("flags"); ok {
+		fd.aliases = strings.Split(aliases, ",")
+	} else {
+		fd.aliases = []string{"--" + strings.ToLower(name)}
+	}
+
+	if defaultValue, ok := t.Tag.Lookup("default"); ok {
+		fd.defaultValue = defaultValue
+	}
+
+	return fd
 }
 
 var (
