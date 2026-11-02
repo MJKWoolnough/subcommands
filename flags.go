@@ -54,7 +54,7 @@ func (f *flags) process(typ reflect.Type, index []int) error {
 		}
 
 		switch typ.Kind() {
-		case reflect.Interface:
+		case reflect.Interface, reflect.Func, reflect.Chan:
 			continue
 		case reflect.Struct:
 			if !field.Type.Implements(flagI) && !reflect.PointerTo(field.Type).Implements(flagI) {
