@@ -11,7 +11,6 @@ import (
 var flagI = reflect.TypeFor[flag.Value]()
 
 type flagData struct {
-	depth        int
 	aliases      []string
 	typ          reflect.Type
 	defaultValue string
@@ -22,7 +21,7 @@ type flags struct {
 	flags map[string]*flagData
 }
 
-func (f *flags) process(typ reflect.Type, level int) error {
+func (f *flags) process(typ reflect.Type, index []int) error {
 	if f.flags == nil {
 		f.flags = make(map[string]*flagData)
 	}
@@ -41,7 +40,7 @@ func (f *flags) process(typ reflect.Type, level int) error {
 		}
 
 		if field.Anonymous {
-			if err := f.process(field.Type, level+1); errors.Is(err, ErrFlagStructRequired) {
+			if err := f.process(field.Type, append(index, field.Index...)); errors.Is(err, ErrFlagStructRequired) {
 				continue
 			} else if err != nil {
 				return err
@@ -58,12 +57,12 @@ func (f *flags) process(typ reflect.Type, level int) error {
 
 			fallthrough
 		default:
-			g := parseFlag(field.Name, field, level)
+			g := parseFlag(field.Name, field, append(index, field.Index...))
 
 			for _, alias := range g.aliases {
-				if e, ok := f.flags[alias]; ok && e.depth == level {
+				if e, ok := f.flags[alias]; ok && len(e.index) == len(index)+1 {
 					return fmt.Errorf("%w: %s", ErrAmbiguousFlags, alias)
-				} else if ok && e.depth < level {
+				} else if ok && len(e.index) <= len(index) {
 					continue
 				}
 
@@ -75,11 +74,10 @@ func (f *flags) process(typ reflect.Type, level int) error {
 	return nil
 }
 
-func parseFlag(name string, t reflect.StructField, level int) *flagData {
+func parseFlag(name string, t reflect.StructField, index []int) *flagData {
 	fd := &flagData{
-		depth: level,
 		typ:   t.Type,
-		index: t.Index,
+		index: index,
 	}
 
 	if aliases, ok := t.Tag.Lookup("flags"); ok {

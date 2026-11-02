@@ -26,7 +26,7 @@ var globalCommand Commands
 func (c *Commands) Register[T any](short, long string, fn func(T) error, subs ...string) error {
 	var f flags
 
-	if err := f.process(reflect.TypeFor[T](), 0); err != nil {
+	if err := f.process(reflect.TypeFor[T](), nil); err != nil {
 		return err
 	}
 
@@ -36,7 +36,7 @@ func (c *Commands) Register[T any](short, long string, fn func(T) error, subs ..
 func (c *Commands) Prepare[T, U any](fn func(T) (U, error)) error {
 	var f flags
 
-	if err := f.process(reflect.TypeFor[T](), 0); err != nil {
+	if err := f.process(reflect.TypeFor[T](), nil); err != nil {
 		return err
 	}
 
