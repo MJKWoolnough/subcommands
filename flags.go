@@ -47,11 +47,17 @@ func (f *flags) process(typ reflect.Type, index []int) error {
 			}
 		}
 
-		switch field.Type.Kind() {
+		typ := field.Type
+
+		if typ.Kind() == reflect.Pointer {
+			typ = typ.Elem()
+		}
+
+		switch typ.Kind() {
 		case reflect.Interface:
 			continue
 		case reflect.Struct:
-			if !field.Type.Implements(flagI) {
+			if !field.Type.Implements(flagI) && !reflect.PointerTo(field.Type).Implements(flagI) {
 				continue
 			}
 
