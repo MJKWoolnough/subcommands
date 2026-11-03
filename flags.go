@@ -93,13 +93,8 @@ func parseFlag(name string, t reflect.StructField, index []int) *flagData {
 		fd.aliases = []string{"--" + strings.ToLower(name)}
 	}
 
-	if defaultValue, ok := t.Tag.Lookup("default"); ok {
-		fd.defaultValue = defaultValue
-	}
-
-	if usage, ok := t.Tag.Lookup("usage"); ok {
-		fd.usage = usage
-	}
+	fd.defaultValue = t.Tag.Get("default")
+	fd.usage = t.Tag.Get("usage")
 
 	return fd
 }
