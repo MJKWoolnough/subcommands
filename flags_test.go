@@ -257,6 +257,19 @@ func TestFlagsProcess(t *testing.T) {
 			}{},
 			Output: map[string]*flagData{},
 		},
+		{ // 18
+			Input: struct {
+				FlagA string `usage:"Flag Usage Text"`
+			}{},
+			Output: map[string]*flagData{
+				"--flaga": {
+					aliases: []string{"--flaga"},
+					typ:     reflect.TypeFor[string](),
+					index:   []int{0},
+					usage:   "Flag Usage Text",
+				},
+			},
+		},
 	} {
 		var flags flags
 
