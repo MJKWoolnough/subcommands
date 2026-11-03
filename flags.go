@@ -15,6 +15,7 @@ type flagData struct {
 	typ          reflect.Type
 	defaultValue string
 	index        []int
+	usage        string
 }
 
 type flags struct {
@@ -94,6 +95,10 @@ func parseFlag(name string, t reflect.StructField, index []int) *flagData {
 
 	if defaultValue, ok := t.Tag.Lookup("default"); ok {
 		fd.defaultValue = defaultValue
+	}
+
+	if usage, ok := t.Tag.Lookup("usage"); ok {
+		fd.usage = usage
 	}
 
 	return fd
