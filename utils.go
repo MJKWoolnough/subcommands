@@ -38,9 +38,11 @@ func setValue(typ reflect.Type, args []string) (reflect.Value, bool, error) {
 			v = pv.Elem()
 		}
 
-		err := v.Interface().(flag.Value).Set(next)
+		if err := v.Interface().(flag.Value).Set(next); err != nil {
+			return reflect.Value{}, false, err
+		}
 
-		return v, true, err
+		return v, true, nil
 	}
 
 	switch typ.Kind() {
