@@ -29,7 +29,15 @@ func setValue(typ reflect.Type, args []string) (reflect.Value, bool, error) {
 	} else if !ok {
 		return reflect.Value{}, false, ErrMissingValue
 	} else if typ.Implements(flagI) {
-		v := reflect.New(typ).Elem()
+		var v reflect.Value
+
+		if typ.Kind() == reflect.Pointer {
+			v = reflect.New(typ.Elem())
+		} else {
+			pv := reflect.New(typ)
+			v = pv.Elem()
+		}
+
 		err := v.Interface().(flag.Value).Set(next)
 
 		return v, true, err
