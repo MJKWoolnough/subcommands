@@ -21,6 +21,27 @@ func TestSetValue(t *testing.T) {
 			false,
 			nil,
 		},
+		{
+			reflect.TypeFor[bool](),
+			[]string{"unknown"},
+			reflect.ValueOf(true),
+			false,
+			nil,
+		},
+		{
+			reflect.TypeFor[bool](),
+			[]string{"True"},
+			reflect.ValueOf(true),
+			true,
+			nil,
+		},
+		{
+			reflect.TypeFor[bool](),
+			[]string{"0"},
+			reflect.ValueOf(false),
+			true,
+			nil,
+		},
 	} {
 		if v, used, err := setValue(test.Type, test.Args); !errors.Is(err, test.Err) {
 			t.Errorf("test %d: expecting error %v, got %v", n+1, test.Err, err)
