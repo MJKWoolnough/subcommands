@@ -67,7 +67,7 @@ func TestSetValue(t *testing.T) {
 	} {
 		if v, used, err := setValue(test.Type, test.Args); !errors.Is(err, test.Err) {
 			t.Errorf("test %d: expecting error %v, got %v", n+1, test.Err, err)
-		} else if !v.IsValid() || !reflect.DeepEqual(v.Interface(), test.Value.Interface()) {
+		} else if v.IsValid() != test.Value.IsValid() || v.IsValid() && !reflect.DeepEqual(v.Interface(), test.Value.Interface()) {
 			t.Errorf("test %d: expecting value %v, got %v", n+1, test.Value, v)
 		} else if used != test.UsedNext {
 			t.Errorf("test %d: expecting next used to be %v, got %v", n+1, test.UsedNext, used)
