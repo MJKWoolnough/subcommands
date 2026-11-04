@@ -64,6 +64,13 @@ func TestSetValue(t *testing.T) {
 			true,
 			nil,
 		},
+		{
+			reflect.TypeFor[*sliceFlag](),
+			[]string{"BAD"},
+			reflect.Value{},
+			false,
+			io.EOF,
+		},
 	} {
 		if v, used, err := setValue(test.Type, test.Args); !errors.Is(err, test.Err) {
 			t.Errorf("test %d: expecting error %v, got %v", n+1, test.Err, err)
