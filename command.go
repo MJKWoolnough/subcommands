@@ -23,7 +23,7 @@ func (c *command) register[T any](short, long string, fn func(T) error, f flags,
 		return d.register(short, long, fn, f, subs[1:]...)
 	}
 
-	if !c.fn.IsValid() {
+	if c.fn.IsValid() {
 		return ErrSubcommandRegistered
 	}
 
