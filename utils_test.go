@@ -2,9 +2,24 @@ package subcommands
 
 import (
 	"errors"
+	"io"
 	"reflect"
 	"testing"
 )
+
+type sliceFlag [1]string
+
+func (s sliceFlag) String() string { return s[0] }
+
+func (s *sliceFlag) Set(v string) error {
+	if v == "BAD" {
+		return io.EOF
+	}
+
+	s[0] = v
+
+	return nil
+}
 
 func TestSetValue(t *testing.T) {
 	for n, test := range [...]struct {
@@ -42,10 +57,17 @@ func TestSetValue(t *testing.T) {
 			true,
 			nil,
 		},
+		{
+			reflect.TypeFor[*sliceFlag](),
+			[]string{"next"},
+			reflect.ValueOf(&sliceFlag{"next"}),
+			true,
+			nil,
+		},
 	} {
 		if v, used, err := setValue(test.Type, test.Args); !errors.Is(err, test.Err) {
 			t.Errorf("test %d: expecting error %v, got %v", n+1, test.Err, err)
-		} else if !v.Equal(test.Value) {
+		} else if !v.IsValid() || !reflect.DeepEqual(v.Interface(), test.Value.Interface()) {
 			t.Errorf("test %d: expecting value %v, got %v", n+1, test.Value, v)
 		} else if used != test.UsedNext {
 			t.Errorf("test %d: expecting next used to be %v, got %v", n+1, test.UsedNext, used)
