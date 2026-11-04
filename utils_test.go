@@ -71,6 +71,20 @@ func TestSetValue(t *testing.T) {
 			false,
 			io.EOF,
 		},
+		{
+			reflect.TypeFor[string](),
+			nil,
+			reflect.Value{},
+			false,
+			ErrMissingValue,
+		},
+		{
+			reflect.TypeFor[string](),
+			[]string{"next"},
+			reflect.ValueOf("next"),
+			true,
+			nil,
+		},
 	} {
 		if v, used, err := setValue(test.Type, test.Args); !errors.Is(err, test.Err) {
 			t.Errorf("test %d: expecting error %v, got %v", n+1, test.Err, err)
