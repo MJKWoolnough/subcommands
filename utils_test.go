@@ -10,11 +10,11 @@ import (
 	"testing"
 )
 
-type sliceFlag [1]string
+type arrayFlag [1]string
 
-func (s sliceFlag) String() string { return s[0] }
+func (s arrayFlag) String() string { return s[0] }
 
-func (s *sliceFlag) Set(v string) error {
+func (s *arrayFlag) Set(v string) error {
 	if v == "BAD" {
 		return io.EOF
 	}
@@ -73,14 +73,14 @@ func TestSetValue(t *testing.T) {
 			nil,
 		},
 		{ // 5
-			reflect.TypeFor[*sliceFlag](),
+			reflect.TypeFor[*arrayFlag](),
 			[]string{"next"},
-			reflect.ValueOf(&sliceFlag{"next"}),
+			reflect.ValueOf(&arrayFlag{"next"}),
 			true,
 			nil,
 		},
 		{ // 6
-			reflect.TypeFor[*sliceFlag](),
+			reflect.TypeFor[*arrayFlag](),
 			[]string{"BAD"},
 			reflect.Value{},
 			false,
@@ -94,21 +94,21 @@ func TestSetValue(t *testing.T) {
 			nil,
 		},
 		{ // 8
-			reflect.TypeFor[*sliceFlag](),
+			reflect.TypeFor[*arrayFlag](),
 			[]string{"BAD"},
 			reflect.Value{},
 			false,
 			io.EOF,
 		},
 		{ // 9
-			reflect.TypeFor[sliceFlag](),
+			reflect.TypeFor[arrayFlag](),
 			[]string{"next"},
-			reflect.ValueOf(sliceFlag{"next"}),
+			reflect.ValueOf(arrayFlag{"next"}),
 			true,
 			nil,
 		},
 		{ // 10
-			reflect.TypeFor[sliceFlag](),
+			reflect.TypeFor[arrayFlag](),
 			[]string{"BAD"},
 			reflect.Value{},
 			false,
