@@ -3,7 +3,10 @@ package subcommands
 import (
 	"errors"
 	"io"
+	"maps"
 	"reflect"
+	"slices"
+	"strings"
 	"testing"
 )
 
@@ -17,6 +20,18 @@ func (s *sliceFlag) Set(v string) error {
 	}
 
 	s[0] = v
+
+	return nil
+}
+
+type mapFlag map[string]struct{}
+
+func (m mapFlag) String() string {
+	return strings.Join(slices.Collect(maps.Keys(m)), ", ")
+}
+
+func (m mapFlag) Set(v string) error {
+	m[v] = struct{}{}
 
 	return nil
 }
@@ -72,27 +87,41 @@ func TestSetValue(t *testing.T) {
 			io.EOF,
 		},
 		{ // 7
-			reflect.TypeFor[sliceFlag](),
+			reflect.TypeFor[mapFlag](),
 			[]string{"next"},
-			reflect.ValueOf(sliceFlag{"next"}),
+			reflect.ValueOf(mapFlag{"next": struct{}{}}),
 			true,
 			nil,
 		},
 		{ // 8
-			reflect.TypeFor[sliceFlag](),
+			reflect.TypeFor[*sliceFlag](),
 			[]string{"BAD"},
 			reflect.Value{},
 			false,
 			io.EOF,
 		},
 		{ // 9
+			reflect.TypeFor[sliceFlag](),
+			[]string{"next"},
+			reflect.ValueOf(sliceFlag{"next"}),
+			true,
+			nil,
+		},
+		{ // 10
+			reflect.TypeFor[sliceFlag](),
+			[]string{"BAD"},
+			reflect.Value{},
+			false,
+			io.EOF,
+		},
+		{ // 11
 			reflect.TypeFor[string](),
 			nil,
 			reflect.Value{},
 			false,
 			ErrMissingValue,
 		},
-		{ // 10
+		{ // 12
 			reflect.TypeFor[string](),
 			[]string{"next"},
 			reflect.ValueOf("next"),
