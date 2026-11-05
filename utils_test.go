@@ -29,56 +29,56 @@ func TestSetValue(t *testing.T) {
 		UsedNext bool
 		Err      error
 	}{
-		{
+		{ // 1
 			reflect.TypeFor[bool](),
 			nil,
 			reflect.ValueOf(true),
 			false,
 			nil,
 		},
-		{
+		{ // 2
 			reflect.TypeFor[bool](),
 			[]string{"unknown"},
 			reflect.ValueOf(true),
 			false,
 			nil,
 		},
-		{
+		{ // 3
 			reflect.TypeFor[bool](),
 			[]string{"True"},
 			reflect.ValueOf(true),
 			true,
 			nil,
 		},
-		{
+		{ // 4
 			reflect.TypeFor[bool](),
 			[]string{"0"},
 			reflect.ValueOf(false),
 			true,
 			nil,
 		},
-		{
+		{ // 5
 			reflect.TypeFor[*sliceFlag](),
 			[]string{"next"},
 			reflect.ValueOf(&sliceFlag{"next"}),
 			true,
 			nil,
 		},
-		{
+		{ // 6
 			reflect.TypeFor[*sliceFlag](),
 			[]string{"BAD"},
 			reflect.Value{},
 			false,
 			io.EOF,
 		},
-		{
+		{ // 7
 			reflect.TypeFor[string](),
 			nil,
 			reflect.Value{},
 			false,
 			ErrMissingValue,
 		},
-		{
+		{ // 8
 			reflect.TypeFor[string](),
 			[]string{"next"},
 			reflect.ValueOf("next"),
