@@ -105,10 +105,6 @@ func makeType(typ reflect.Type) (reflect.Value, reflect.Value) {
 		v := reflect.MakeSlice(typ, 0, 0)
 
 		return v, v
-	case reflect.Chan:
-		v := reflect.MakeChan(typ, 0)
-
-		return v, v
 	case reflect.Pointer:
 		v := reflect.New(typ.Elem())
 
