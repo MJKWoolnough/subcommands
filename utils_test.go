@@ -102,54 +102,61 @@ func TestSetValue(t *testing.T) {
 			false,
 			io.EOF,
 		},
-		{ // 7
+		{ // 5
 			reflect.TypeFor[sliceFlag](),
 			[]string{"next"},
 			reflect.ValueOf(sliceFlag{"next"}),
 			true,
 			nil,
 		},
-		{ // 8
+		{ // 7
 			reflect.TypeFor[mapFlag](),
 			[]string{"next"},
 			reflect.ValueOf(mapFlag{"next": struct{}{}}),
 			true,
 			nil,
 		},
-		{ // 9
+		{ // 8
 			reflect.TypeFor[*arrayFlag](),
 			[]string{"BAD"},
 			reflect.Value{},
 			false,
 			io.EOF,
 		},
-		{ // 10
+		{ // 9
 			reflect.TypeFor[arrayFlag](),
 			[]string{"next"},
 			reflect.ValueOf(arrayFlag{"next"}),
 			true,
 			nil,
 		},
-		{ // 11
+		{ // 10
 			reflect.TypeFor[arrayFlag](),
 			[]string{"BAD"},
 			reflect.Value{},
 			false,
 			io.EOF,
 		},
-		{ // 12
+		{ // 11
 			reflect.TypeFor[string](),
 			nil,
 			reflect.Value{},
 			false,
 			ErrMissingValue,
 		},
-		{ // 13
+		{ // 12
 			reflect.TypeFor[string](),
 			[]string{"next"},
 			reflect.ValueOf("next"),
 			true,
 			nil,
+		},
+		{ // 13
+			reflect.TypeFor[chan string](),
+			[]string{"next"},
+			reflect.Value{},
+			false,
+			ErrInvalidType,
 		},
 	} {
 		if v, used, err := setValue(test.Type, test.Args); !errors.Is(err, test.Err) {
