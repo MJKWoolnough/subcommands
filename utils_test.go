@@ -12,14 +12,30 @@ import (
 
 type arrayFlag [1]string
 
-func (s arrayFlag) String() string { return s[0] }
+func (a arrayFlag) String() string { return a[0] }
 
-func (s *arrayFlag) Set(v string) error {
+func (a *arrayFlag) Set(v string) error {
 	if v == "BAD" {
 		return io.EOF
 	}
 
-	s[0] = v
+	a[0] = v
+
+	return nil
+}
+
+type sliceFlag []string
+
+func (s sliceFlag) String() string {
+	if len(s) > 0 {
+		return s[0]
+	}
+
+	return ""
+}
+
+func (s *sliceFlag) Set(v string) error {
+	*s = append(*s, v)
 
 	return nil
 }
@@ -87,41 +103,48 @@ func TestSetValue(t *testing.T) {
 			io.EOF,
 		},
 		{ // 7
+			reflect.TypeFor[sliceFlag](),
+			[]string{"next"},
+			reflect.ValueOf(sliceFlag{"next"}),
+			true,
+			nil,
+		},
+		{ // 8
 			reflect.TypeFor[mapFlag](),
 			[]string{"next"},
 			reflect.ValueOf(mapFlag{"next": struct{}{}}),
 			true,
 			nil,
 		},
-		{ // 8
+		{ // 9
 			reflect.TypeFor[*arrayFlag](),
 			[]string{"BAD"},
 			reflect.Value{},
 			false,
 			io.EOF,
 		},
-		{ // 9
+		{ // 10
 			reflect.TypeFor[arrayFlag](),
 			[]string{"next"},
 			reflect.ValueOf(arrayFlag{"next"}),
 			true,
 			nil,
 		},
-		{ // 10
+		{ // 11
 			reflect.TypeFor[arrayFlag](),
 			[]string{"BAD"},
 			reflect.Value{},
 			false,
 			io.EOF,
 		},
-		{ // 11
+		{ // 12
 			reflect.TypeFor[string](),
 			nil,
 			reflect.Value{},
 			false,
 			ErrMissingValue,
 		},
-		{ // 12
+		{ // 13
 			reflect.TypeFor[string](),
 			[]string{"next"},
 			reflect.ValueOf("next"),
