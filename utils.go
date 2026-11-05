@@ -29,28 +29,21 @@ func setValue(typ reflect.Type, args []string) (reflect.Value, bool, error) {
 	} else if !ok {
 		return reflect.Value{}, false, ErrMissingValue
 	} else if typ.Implements(flagI) {
-		var v reflect.Value
+		pv, v := makeType(typ)
 
-		if typ.Kind() == reflect.Pointer {
-			v = reflect.New(typ.Elem())
-		} else {
-			pv := reflect.New(typ)
-			v = pv.Elem()
-		}
-
-		if err := v.Interface().(flag.Value).Set(next); err != nil {
+		if err := pv.Interface().(flag.Value).Set(next); err != nil {
 			return reflect.Value{}, false, err
 		}
 
 		return v, true, nil
 	} else if reflect.PointerTo(typ).Implements(flagI) {
-		v := reflect.New(typ)
+		pv, v := makeType(typ)
 
-		if err := v.Interface().(flag.Value).Set(next); err != nil {
+		if err := pv.Interface().(flag.Value).Set(next); err != nil {
 			return reflect.Value{}, false, err
 		}
 
-		return v.Elem(), true, nil
+		return v, true, nil
 	}
 
 	switch typ.Kind() {
@@ -100,6 +93,31 @@ func setValue(typ reflect.Type, args []string) (reflect.Value, bool, error) {
 	}
 
 	return reflect.Value{}, false, ErrInvalidType
+}
+
+func makeType(typ reflect.Type) (reflect.Value, reflect.Value) {
+	switch typ.Kind() {
+	case reflect.Map:
+		v := reflect.MakeMap(typ)
+
+		return v, v
+	case reflect.Slice:
+		v := reflect.MakeSlice(typ, 0, 0)
+
+		return v, v
+	case reflect.Chan:
+		v := reflect.MakeChan(typ, 0)
+
+		return v, v
+	case reflect.Pointer:
+		v := reflect.New(typ.Elem())
+
+		return v, v
+	default:
+		v := reflect.New(typ)
+
+		return v, v.Elem()
+	}
 }
 
 func parseInt[T int8 | int16 | int32 | int64 | int](next string, bits int) (reflect.Value, bool, error) {
