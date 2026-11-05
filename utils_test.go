@@ -72,13 +72,27 @@ func TestSetValue(t *testing.T) {
 			io.EOF,
 		},
 		{ // 7
+			reflect.TypeFor[sliceFlag](),
+			[]string{"next"},
+			reflect.ValueOf(sliceFlag{"next"}),
+			true,
+			nil,
+		},
+		{ // 8
+			reflect.TypeFor[sliceFlag](),
+			[]string{"BAD"},
+			reflect.Value{},
+			false,
+			io.EOF,
+		},
+		{ // 9
 			reflect.TypeFor[string](),
 			nil,
 			reflect.Value{},
 			false,
 			ErrMissingValue,
 		},
-		{ // 8
+		{ // 10
 			reflect.TypeFor[string](),
 			[]string{"next"},
 			reflect.ValueOf("next"),
