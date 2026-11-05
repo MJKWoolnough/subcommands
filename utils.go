@@ -102,9 +102,11 @@ func makeType(typ reflect.Type) (reflect.Value, reflect.Value) {
 
 		return v, v
 	case reflect.Slice:
-		v := reflect.MakeSlice(typ, 0, 0)
+		pv := reflect.New(typ)
 
-		return v, v
+		pv.Elem().Set(reflect.MakeSlice(typ, 0, 0))
+
+		return pv, pv.Elem()
 	case reflect.Pointer:
 		v := reflect.New(typ.Elem())
 
