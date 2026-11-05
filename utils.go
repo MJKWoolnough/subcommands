@@ -43,6 +43,14 @@ func setValue(typ reflect.Type, args []string) (reflect.Value, bool, error) {
 		}
 
 		return v, true, nil
+	} else if reflect.PointerTo(typ).Implements(flagI) {
+		v := reflect.New(typ)
+
+		if err := v.Interface().(flag.Value).Set(next); err != nil {
+			return reflect.Value{}, false, err
+		}
+
+		return v.Elem(), true, nil
 	}
 
 	switch typ.Kind() {
