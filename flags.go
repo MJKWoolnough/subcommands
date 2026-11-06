@@ -99,7 +99,30 @@ func parseFlag(name string, t reflect.StructField, index []int) *flagData {
 	return fd
 }
 
+func (f *flags) set(v reflect.Value, args []string) error {
+	for i := 0; i < len(args); i++ {
+		flag, ok := f.flags[args[i]]
+		if !ok {
+			return fmt.Errorf("%w: %s", ErrInvalidArgument, args[i])
+		}
+
+		w, next, err := setValue(flag.typ, args[i+1:])
+		if err != nil {
+			return err
+		}
+
+		if next {
+			i++
+		}
+
+		v.FieldByIndex(flag.index).Set(w)
+	}
+
+	return nil
+}
+
 var (
 	ErrFlagStructRequired = errors.New("flag type must be a struct")
 	ErrAmbiguousFlags     = errors.New("ambiguous flags")
+	ErrInvalidArgument    = errors.New("invalid argument")
 )
