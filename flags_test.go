@@ -326,6 +326,20 @@ func TestFlagsSet(t *testing.T) {
 			},
 			nil,
 		},
+		{
+			[]string{"--z", "abc"},
+			struct {
+				A *string
+			}{},
+			ErrInvalidArgument,
+		},
+		{
+			[]string{"--a"},
+			struct {
+				A *string
+			}{},
+			ErrMissingValue,
+		},
 	} {
 		var flags flags
 
