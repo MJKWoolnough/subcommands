@@ -281,3 +281,62 @@ func TestFlagsProcess(t *testing.T) {
 		}
 	}
 }
+
+func TestFlagsSet(t *testing.T) {
+	for n, test := range [...]struct {
+		Args   []string
+		Output any
+		Err    error
+	}{
+		{
+			[]string{"--a", "abc"},
+			struct {
+				A string
+			}{
+				A: "abc",
+			},
+			nil,
+		},
+		{
+			[]string{"--a", "abc", "--b"},
+			struct {
+				A string
+				B bool
+			}{
+				A: "abc",
+				B: true,
+			},
+			nil,
+		},
+		{
+			[]string{"--a", "xxx"},
+			struct {
+				A arrayFlag
+			}{
+				A: arrayFlag{"xxx"},
+			},
+			nil,
+		},
+		{
+			[]string{"--a", "abc"},
+			struct {
+				A *string
+			}{
+				A: new("abc"),
+			},
+			nil,
+		},
+	} {
+		var flags flags
+
+		v := reflect.New(reflect.TypeOf(test.Output)).Elem()
+
+		if err := flags.process(reflect.TypeOf(test.Output), nil); err != nil {
+			t.Errorf("test %d: unexpected error: %v", n+1, err)
+		} else if err = flags.set(v, test.Args); !errors.Is(err, test.Err) {
+			t.Errorf("test %d: expecting error %v, got %v", n+1, test.Err, err)
+		} else if !reflect.DeepEqual(v.Interface(), test.Output) {
+			t.Errorf("test %d: expecting %+v, got %+v", n+1, test.Output, v.Interface())
+		}
+	}
+}
