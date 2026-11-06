@@ -221,6 +221,41 @@ func TestSetValue(t *testing.T) {
 			true,
 			nil,
 		},
+		{ // 24
+			reflect.TypeFor[uint](),
+			[]string{"1"},
+			reflect.ValueOf(uint(1)),
+			true,
+			nil,
+		},
+		{ // 25
+			reflect.TypeFor[uint8](),
+			[]string{"1"},
+			reflect.ValueOf(uint8(1)),
+			true,
+			nil,
+		},
+		{ // 26
+			reflect.TypeFor[uint16](),
+			[]string{"1000"},
+			reflect.ValueOf(uint16(1000)),
+			true,
+			nil,
+		},
+		{ // 27
+			reflect.TypeFor[uint32](),
+			[]string{"999"},
+			reflect.ValueOf(uint32(999)),
+			true,
+			nil,
+		},
+		{ // 28
+			reflect.TypeFor[uint64](),
+			[]string{"10000000"},
+			reflect.ValueOf(uint64(10000000)),
+			true,
+			nil,
+		},
 	} {
 		if v, used, err := setValue(test.Type, test.Args); !errors.Is(err, test.Err) {
 			t.Errorf("test %d: expecting error %v, got %v", n+1, test.Err, err)
