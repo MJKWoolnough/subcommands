@@ -288,7 +288,7 @@ func TestFlagsSet(t *testing.T) {
 		Output any
 		Err    error
 	}{
-		{
+		{ // 1
 			[]string{"--a", "abc"},
 			struct {
 				A string
@@ -297,7 +297,7 @@ func TestFlagsSet(t *testing.T) {
 			},
 			nil,
 		},
-		{
+		{ // 2
 			[]string{"--a", "abc", "--b"},
 			struct {
 				A string
@@ -308,7 +308,7 @@ func TestFlagsSet(t *testing.T) {
 			},
 			nil,
 		},
-		{
+		{ // 3
 			[]string{"--a", "xxx"},
 			struct {
 				A arrayFlag
@@ -317,7 +317,7 @@ func TestFlagsSet(t *testing.T) {
 			},
 			nil,
 		},
-		{
+		{ // 4
 			[]string{"--a", "abc"},
 			struct {
 				A *string
@@ -326,14 +326,14 @@ func TestFlagsSet(t *testing.T) {
 			},
 			nil,
 		},
-		{
+		{ // 5
 			[]string{"--z", "abc"},
 			struct {
 				A *string
 			}{},
 			ErrInvalidArgument,
 		},
-		{
+		{ // 6
 			[]string{"--a"},
 			struct {
 				A *string
