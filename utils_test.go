@@ -102,89 +102,124 @@ func TestSetValue(t *testing.T) {
 			false,
 			io.EOF,
 		},
-		{ // 5
+		{ // 7
 			reflect.TypeFor[sliceFlag](),
 			[]string{"next"},
 			reflect.ValueOf(sliceFlag{"next"}),
 			true,
 			nil,
 		},
-		{ // 7
+		{ // 8
 			reflect.TypeFor[mapFlag](),
 			[]string{"next"},
 			reflect.ValueOf(mapFlag{"next": struct{}{}}),
 			true,
 			nil,
 		},
-		{ // 8
+		{ // 9
 			reflect.TypeFor[*arrayFlag](),
 			[]string{"BAD"},
 			reflect.Value{},
 			false,
 			io.EOF,
 		},
-		{ // 9
+		{ // 10
 			reflect.TypeFor[arrayFlag](),
 			[]string{"next"},
 			reflect.ValueOf(arrayFlag{"next"}),
 			true,
 			nil,
 		},
-		{ // 10
+		{ // 11
 			reflect.TypeFor[arrayFlag](),
 			[]string{"BAD"},
 			reflect.Value{},
 			false,
 			io.EOF,
 		},
-		{ // 11
+		{ // 12
 			reflect.TypeFor[string](),
 			nil,
 			reflect.Value{},
 			false,
 			ErrMissingValue,
 		},
-		{ // 12
+		{ // 13
 			reflect.TypeFor[string](),
 			[]string{"next"},
 			reflect.ValueOf("next"),
 			true,
 			nil,
 		},
-		{ // 13
+		{ // 14
 			reflect.TypeFor[chan string](),
 			[]string{"next"},
 			reflect.Value{},
 			false,
 			ErrInvalidType,
 		},
-		{ // 14
+		{ // 15
 			reflect.TypeFor[*string](),
 			[]string{"next"},
 			reflect.ValueOf(new("next")),
 			true,
 			nil,
 		},
-		{ // 15
+		{ // 16
 			reflect.TypeFor[*chan string](),
 			[]string{"next"},
 			reflect.Value{},
 			false,
 			ErrInvalidType,
 		},
-		{ // 16
+		{ // 17
 			reflect.TypeFor[[]string](),
 			[]string{"next"},
 			reflect.ValueOf([]string{"next"}),
 			true,
 			nil,
 		},
-		{ // 16
+		{ // 18
 			reflect.TypeFor[[]chan string](),
 			[]string{"next"},
 			reflect.Value{},
 			false,
 			ErrInvalidType,
+		},
+		{ // 19
+			reflect.TypeFor[int](),
+			[]string{"1"},
+			reflect.ValueOf(1),
+			true,
+			nil,
+		},
+		{ // 20
+			reflect.TypeFor[int8](),
+			[]string{"-1"},
+			reflect.ValueOf(int8(-1)),
+			true,
+			nil,
+		},
+		{ // 21
+			reflect.TypeFor[int16](),
+			[]string{"1000"},
+			reflect.ValueOf(int16(1000)),
+			true,
+			nil,
+		},
+		{ // 22
+			reflect.TypeFor[int32](),
+			[]string{"999"},
+			reflect.ValueOf(int32(999)),
+			true,
+			nil,
+		},
+		{ // 23
+			reflect.TypeFor[int64](),
+			[]string{"10000000"},
+			reflect.ValueOf(int64(10000000)),
+			true,
+			nil,
 		},
 	} {
 		if v, used, err := setValue(test.Type, test.Args); !errors.Is(err, test.Err) {
