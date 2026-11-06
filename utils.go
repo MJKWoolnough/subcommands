@@ -77,7 +77,11 @@ func setValue(typ reflect.Type, args []string) (reflect.Value, bool, error) {
 			return reflect.Value{}, false, err
 		}
 
-		return v.Addr(), n, nil
+		p := reflect.New(typ.Elem())
+
+		p.Elem().Set(v)
+
+		return p, n, nil
 	case reflect.Slice:
 		v, n, err := setValue(typ.Elem(), args)
 		if err != nil {
