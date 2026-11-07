@@ -62,7 +62,7 @@ func (c *Commands) Run() error {
 }
 
 func (c *Commands) RunWithArgs(args []string) error {
-	return nil
+	return c.run(args)
 }
 
 func Register[T any](fn func(T) error, opts ...Option) error {
