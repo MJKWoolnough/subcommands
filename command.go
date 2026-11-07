@@ -33,4 +33,16 @@ func (c *command) register[T any](short, long string, fn func(T) error, f flags,
 	return nil
 }
 
+func (c *command) wrapHelp(subcommand []string, err error) error {
+	if err == nil {
+		return nil
+	}
+
+	return &Help{
+		command:    c,
+		Subcommand: subcommand,
+		Err:        err,
+	}
+}
+
 var ErrSubcommandRegistered = errors.New("subcommand already registered")
