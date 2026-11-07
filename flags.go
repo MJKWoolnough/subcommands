@@ -4,7 +4,9 @@ import (
 	"errors"
 	"flag"
 	"fmt"
+	"maps"
 	"reflect"
+	"slices"
 	"strings"
 )
 
@@ -119,6 +121,19 @@ func (f *flags) set(v reflect.Value, args []string) error {
 	}
 
 	return nil
+}
+
+func (f *flags) list() []*flagData {
+	flags := slices.Collect(maps.Keys(maps.Collect(func(yield func(*flagData, struct{}) bool) {
+		for _, v := range f.flags {
+			yield(v, struct{}{})
+		}
+	})))
+	slices.SortFunc(flags, func(a, b *flagData) int {
+		return strings.Compare(a.aliases[0], b.aliases[0])
+	})
+
+	return flags
 }
 
 var (
