@@ -9,6 +9,7 @@ type command struct {
 	subcommands map[string]*command
 	flags       flags
 	fn          reflect.Value
+	short, long string
 }
 
 func (c *command) register[T any](short, long string, fn func(T) error, f flags, subs ...string) error {
@@ -29,6 +30,8 @@ func (c *command) register[T any](short, long string, fn func(T) error, f flags,
 
 	c.flags = f
 	c.fn = reflect.ValueOf(fn)
+	c.short = short
+	c.long = long
 
 	return nil
 }
