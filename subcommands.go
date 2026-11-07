@@ -23,14 +23,20 @@ type Commands struct {
 
 var globalCommand Commands
 
-func (c *Commands) Register[T any](short, long string, fn func(T) error, subs ...string) error {
+func (c *Commands) Register[T any](fn func(T) error, opts ...Option) error {
 	var f flags
 
 	if err := f.process(reflect.TypeFor[T](), nil); err != nil {
 		return err
 	}
 
-	return c.command.register(short, long, fn, f, subs...)
+	var o options
+
+	for _, opt := range opts {
+		opt(&o)
+	}
+
+	return c.command.register(o.description, o.long, fn, f, o.subcommand...)
 }
 
 func (c *Commands) Prepare[T, U any](fn func(T) (U, error)) error {
@@ -59,8 +65,8 @@ func (c *Commands) RunWithArgs(args []string) error {
 	return nil
 }
 
-func Register[T any](short, long string, fn func(T) error, subs ...string) error {
-	return globalCommand.Register(short, long, fn, subs...)
+func Register[T any](fn func(T) error, opts ...Option) error {
+	return globalCommand.Register(fn, opts...)
 }
 
 func Prepare[T, U any](fn func(T) (U, error)) error {
