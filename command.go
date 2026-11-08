@@ -2,7 +2,10 @@ package subcommands
 
 import (
 	"errors"
+	"maps"
 	"reflect"
+	"slices"
+	"strings"
 )
 
 type command struct {
@@ -49,6 +52,19 @@ func (c *command) wrapHelp(subcommand []string, err error) error {
 		Subcommand: subcommand,
 		Err:        err,
 	}
+}
+
+func (c *command) list() []*command {
+	subs := slices.Collect(maps.Keys(maps.Collect(func(yield func(*command, struct{}) bool) {
+		for _, v := range c.subcommands {
+			yield(v, struct{}{})
+		}
+	})))
+	slices.SortFunc(subs, func(a, b *command) int {
+		return strings.Compare(a.name, b.name)
+	})
+
+	return subs
 }
 
 var ErrSubcommandRegistered = errors.New("subcommand already registered")
