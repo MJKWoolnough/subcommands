@@ -256,6 +256,20 @@ func TestSetValue(t *testing.T) {
 			true,
 			nil,
 		},
+		{ // 29
+			reflect.TypeFor[float32](),
+			[]string{"1.1"},
+			reflect.ValueOf(float32(1.1)),
+			true,
+			nil,
+		},
+		{ // 30
+			reflect.TypeFor[float64](),
+			[]string{"1.25"},
+			reflect.ValueOf(float64(1.25)),
+			true,
+			nil,
+		},
 	} {
 		if v, used, err := setValue(test.Type, test.Args); !errors.Is(err, test.Err) {
 			t.Errorf("test %d: expecting error %v, got %v", n+1, test.Err, err)
