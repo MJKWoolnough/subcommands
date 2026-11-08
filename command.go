@@ -60,6 +60,7 @@ func (c *command) list() []*command {
 			yield(v, struct{}{})
 		}
 	})))
+
 	slices.SortFunc(subs, func(a, b *command) int {
 		return strings.Compare(a.name, b.name)
 	})

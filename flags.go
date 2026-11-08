@@ -140,6 +140,7 @@ func (f *flags) list() []*flagData {
 			yield(v, struct{}{})
 		}
 	})))
+
 	slices.SortFunc(flags, func(a, b *flagData) int {
 		return strings.Compare(a.aliases[0], b.aliases[0])
 	})
