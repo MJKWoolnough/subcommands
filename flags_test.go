@@ -111,6 +111,12 @@ func TestFlagsProcess(t *testing.T) {
 		},
 		{ // 7
 			Input: struct {
+				FlagA string `flags:"-"`
+			}{},
+			Output: map[string]*flagData{},
+		},
+		{ // 8
+			Input: struct {
 				FlagA string `flags:"--aaa,--bbb"`
 			}{},
 			Output: map[string]*flagData{
@@ -118,7 +124,7 @@ func TestFlagsProcess(t *testing.T) {
 				"--bbb": aliased,
 			},
 		},
-		{ // 8
+		{ // 9
 			Input: struct {
 				FlagA string
 				Global
@@ -136,7 +142,7 @@ func TestFlagsProcess(t *testing.T) {
 				},
 			},
 		},
-		{ // 9
+		{ // 10
 			Input: struct {
 				FlagA string
 				Sub
@@ -159,7 +165,7 @@ func TestFlagsProcess(t *testing.T) {
 				},
 			},
 		},
-		{ // 10
+		{ // 11
 			Input: struct {
 				FlagA *customFlag
 			}{},
@@ -171,7 +177,7 @@ func TestFlagsProcess(t *testing.T) {
 				},
 			},
 		},
-		{ // 11
+		{ // 12
 			Input: struct {
 				FlagA customFlag
 			}{},
@@ -183,7 +189,7 @@ func TestFlagsProcess(t *testing.T) {
 				},
 			},
 		},
-		{ // 12
+		{ // 13
 			Input: struct {
 				FlagA string `default:"123"`
 			}{},
@@ -196,7 +202,7 @@ func TestFlagsProcess(t *testing.T) {
 				},
 			},
 		},
-		{ // 13
+		{ // 14
 			Input: struct {
 				FlagA string
 				FlagB string `flags:"--flaga"`
@@ -210,7 +216,7 @@ func TestFlagsProcess(t *testing.T) {
 			},
 			Err: ErrAmbiguousFlags,
 		},
-		{ // 14
+		{ // 15
 			Input: struct {
 				FlagA error
 				FlagB func()
@@ -225,7 +231,7 @@ func TestFlagsProcess(t *testing.T) {
 				},
 			},
 		},
-		{ // 15
+		{ // 16
 			Input: struct {
 				FlagA int `flags:"--globalflag"`
 				Global
@@ -238,7 +244,7 @@ func TestFlagsProcess(t *testing.T) {
 				},
 			},
 		},
-		{ // 16
+		{ // 17
 			Input: struct {
 				Global
 				FlagA int `flags:"--globalflag"`
@@ -251,13 +257,13 @@ func TestFlagsProcess(t *testing.T) {
 				},
 			},
 		},
-		{ // 17
+		{ // 18
 			Input: struct {
 				time.Duration
 			}{},
 			Output: map[string]*flagData{},
 		},
-		{ // 18
+		{ // 19
 			Input: struct {
 				FlagA string `usage:"Flag Usage Text"`
 			}{},
