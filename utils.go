@@ -70,7 +70,7 @@ func setValue(typ reflect.Type, args []string) (reflect.Value, bool, error) {
 	case reflect.Float32:
 		return parseFloat[float32](next, 32)
 	case reflect.Float64:
-		return parseFloat[float32](next, 64)
+		return parseFloat[float64](next, 64)
 	case reflect.Pointer:
 		v, n, err := setValue(typ.Elem(), args)
 		if err != nil {
