@@ -8,6 +8,7 @@ import (
 	"reflect"
 	"slices"
 	"strings"
+	"unicode/utf8"
 )
 
 var flagI = reflect.TypeFor[flag.Value]()
@@ -18,6 +19,16 @@ type flagData struct {
 	defaultValue string
 	index        []int
 	usage        string
+}
+
+func (f *flagData) aliasLength() int {
+	c := len(f.aliases) - 1
+
+	for _, f := range f.aliases {
+		c += utf8.RuneCountInString(f)
+	}
+
+	return c
 }
 
 type flags struct {
