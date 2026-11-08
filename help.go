@@ -1,6 +1,7 @@
 package subcommands
 
 import (
+	"bytes"
 	"cmp"
 	"fmt"
 	"io"
@@ -8,8 +9,6 @@ import (
 	"reflect"
 	"strings"
 	"unicode/utf8"
-
-	"vimagination.zapto.org/rwcount"
 )
 
 type Help struct {
@@ -33,43 +32,43 @@ func (h *Help) Unwrap() error {
 const spacing = 2
 
 func (h *Help) WriteTo(w io.Writer) (int64, error) {
-	wc := rwcount.Writer{Writer: w}
+	var buf bytes.Buffer
 
 	if h.Err != nil {
-		fmt.Fprintf(&wc, "Error: %v\n\n", h.Err)
+		fmt.Fprintf(&buf, "Error: %v\n\n", h.Err)
 	}
 
 	exe, err := os.Executable()
 	if err != nil {
-		wc.Err = cmp.Or(wc.Err, err)
+		return 0, err
 	}
 
-	fmt.Fprintf(&wc, "Usage: %s", exe)
+	fmt.Fprintf(&buf, "Usage: %s", exe)
 
 	if len(h.Subcommand) > 0 {
 		for _, sub := range h.Subcommand {
-			fmt.Fprintf(&wc, " %s", sub)
+			fmt.Fprintf(&buf, " %s", sub)
 		}
 	}
 
 	flags := h.flags.list()
 
 	for _, flag := range flags {
-		fmt.Fprintf(&wc, " %s", flag.aliases[0])
+		fmt.Fprintf(&buf, " %s", flag.aliases[0])
 
 		if flag.typ.Implements(flagI) || reflect.PointerTo(flag.typ).Implements(flagI) {
-			fmt.Fprint(&wc, " value")
+			fmt.Fprint(&buf, " value")
 		} else if flag.typ.Kind() != reflect.Bool {
-			fmt.Fprintf(&wc, " %s", flag.typ.Kind())
+			fmt.Fprintf(&buf, " %s", flag.typ.Kind())
 		}
 	}
 
 	if desc := cmp.Or(h.command.long, h.command.short); desc != "" {
-		fmt.Fprint(&wc, "\n\n", desc)
+		fmt.Fprint(&buf, "\n\n", desc)
 	}
 
 	if len(flags) > 0 {
-		fmt.Fprint(&wc, "\n\nFlags\n=====\n")
+		fmt.Fprint(&buf, "\n\nFlags\n=====\n")
 
 		maxLen := 0
 
@@ -78,23 +77,23 @@ func (h *Help) WriteTo(w io.Writer) (int64, error) {
 		}
 
 		for _, flag := range flags {
-			io.WriteString(&wc, "\n")
+			io.WriteString(&buf, "\n")
 
 			for n, alias := range flag.aliases {
 				if n > 0 {
-					io.WriteString(&wc, ",")
+					io.WriteString(&buf, ",")
 				}
 
-				io.WriteString(&wc, alias)
+				io.WriteString(&buf, alias)
 			}
 
-			io.WriteString(&wc, strings.Repeat(" ", maxLen-flag.aliasLength()+spacing))
-			io.WriteString(&wc, flag.usage)
+			io.WriteString(&buf, strings.Repeat(" ", maxLen-flag.aliasLength()+spacing))
+			io.WriteString(&buf, flag.usage)
 		}
 	}
 
 	if len(h.subcommands) > 0 {
-		fmt.Fprint(&wc, "\n\nSubcommands\n===========\n")
+		fmt.Fprint(&buf, "\n\nSubcommands\n===========\n")
 
 		cmds := h.list()
 
@@ -105,12 +104,12 @@ func (h *Help) WriteTo(w io.Writer) (int64, error) {
 		}
 
 		for _, cmd := range cmds {
-			io.WriteString(&wc, "\n")
-			io.WriteString(&wc, cmd.name)
-			io.WriteString(&wc, strings.Repeat(" ", maxLen-len(cmd.name)+spacing))
-			io.WriteString(&wc, cmd.short)
+			io.WriteString(&buf, "\n")
+			io.WriteString(&buf, cmd.name)
+			io.WriteString(&buf, strings.Repeat(" ", maxLen-len(cmd.name)+spacing))
+			io.WriteString(&buf, cmd.short)
 		}
 	}
 
-	return wc.Count, wc.Err
+	return buf.WriteTo(w)
 }
