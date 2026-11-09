@@ -53,7 +53,7 @@ func (f *flags) process(typ reflect.Type, index []int) error {
 	for field := range typ.Fields() {
 		if !field.IsExported() {
 			continue
-		} else if field.Tag.Get("flags") == "-" {
+		} else if tag, ok := field.Tag.Lookup("flags"); ok && tag == "" {
 			f.types[field.Type] = append(f.types[field.Type], append(index, field.Index...))
 
 			continue

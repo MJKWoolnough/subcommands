@@ -111,7 +111,7 @@ func TestFlagsProcess(t *testing.T) {
 		},
 		{ // 7
 			Input: struct {
-				FlagA string `flags:"-"`
+				FlagA string `flags:""`
 			}{},
 			Output: map[string]*flagData{},
 		},
