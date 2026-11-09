@@ -33,11 +33,13 @@ func (f *flagData) aliasLength() int {
 
 type flags struct {
 	flags map[string]*flagData
+	types map[reflect.Type][][]int
 }
 
 func (f *flags) process(typ reflect.Type, index []int) error {
 	if f.flags == nil {
 		f.flags = make(map[string]*flagData)
+		f.types = make(map[reflect.Type][][]int)
 	}
 
 	if typ.Kind() == reflect.Pointer {
@@ -49,7 +51,11 @@ func (f *flags) process(typ reflect.Type, index []int) error {
 	}
 
 	for field := range typ.Fields() {
-		if !field.IsExported() || field.Tag.Get("flags") == "-" {
+		if !field.IsExported() {
+			continue
+		} else if field.Tag.Get("flags") == "-" {
+			f.types[field.Type] = append(f.types[field.Type], append(index, field.Index...))
+
 			continue
 		}
 
@@ -69,9 +75,13 @@ func (f *flags) process(typ reflect.Type, index []int) error {
 
 		switch typ.Kind() {
 		case reflect.Interface, reflect.Func, reflect.Chan:
+			f.types[field.Type] = append(f.types[field.Type], append(index, field.Index...))
+
 			continue
 		case reflect.Struct:
 			if !field.Type.Implements(flagI) && !reflect.PointerTo(field.Type).Implements(flagI) {
+				f.types[field.Type] = append(f.types[field.Type], append(index, field.Index...))
+
 				continue
 			}
 
