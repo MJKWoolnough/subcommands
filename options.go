@@ -1,29 +1,29 @@
 package subcommands
 
 type options struct {
-	description, long string
-	subcommand        []string
+	summary, description string
+	subcommand           []string
 }
 
 // Options represents an optional configuration setting to pass to the
 // Registration Function.
 type Option func(*options)
 
-// Description sets the subcommand specific description shown in help text.
+// Summary sets the subcommand specific summary shown in subcommand help text.
 //
 // To display a more comprehensive description in a subcommand specific help
-// text, use the Long Description option.
-func Description(desc string) Option {
+// text, use the Description option.
+func Summary(summary string) Option {
 	return func(o *options) {
-		o.description = desc
+		o.summary = summary
 	}
 }
 
-// LongDescription sets the description presented in the subcommand specific
+// Description sets the description presented in the subcommand specific
 // help text.
-func LongDescription(desc string) Option {
+func Description(desc string) Option {
 	return func(o *options) {
-		o.long = desc
+		o.description = desc
 	}
 }
 

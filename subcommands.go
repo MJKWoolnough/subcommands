@@ -36,7 +36,7 @@ func (c *Commands) Register[T any](fn func(T) error, opts ...Option) error {
 		opt(&o)
 	}
 
-	return c.command.register(o.description, o.long, fn, f, o.subcommand...)
+	return c.command.register(o.summary, o.description, fn, f, o.subcommand...)
 }
 
 func (c *Commands) Prepare[T, U any](fn func(T) (U, error)) error {
