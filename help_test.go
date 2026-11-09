@@ -27,6 +27,14 @@ func TestHelpWriteTo(t *testing.T) {
 			io.EOF,
 			"Error: EOF\n\nUsage: " + exe,
 		},
+		{
+			func(c *Commands) {
+				c.Register(func(struct{}) error { return nil }, Description("My Description"))
+			},
+			nil,
+			nil,
+			"Usage: " + exe + "\n\nMy Description",
+		},
 	} {
 		var c Commands
 
