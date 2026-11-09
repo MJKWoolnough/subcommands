@@ -35,6 +35,20 @@ func TestHelpWriteTo(t *testing.T) {
 			nil,
 			"Usage: " + exe + "\n\nMy Description",
 		},
+		{
+			func(c *Commands) {
+				c.Register(func(struct {
+					A  int
+					Bd string
+				},
+				) error {
+					return nil
+				})
+			},
+			nil,
+			nil,
+			"Usage: " + exe + " --a int --bd string\n\nFlags\n=====\n\n--a\n--bd",
+		},
 	} {
 		var c Commands
 
