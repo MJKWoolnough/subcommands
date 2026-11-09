@@ -101,8 +101,10 @@ func (h *Help) writeFlags(buf *bytes.Buffer, flags []*flagData) {
 			io.WriteString(buf, alias)
 		}
 
-		io.WriteString(buf, strings.Repeat(" ", maxLen-flag.aliasLength()+spacing))
-		io.WriteString(buf, flag.usage)
+		if len(flag.usage) > 0 {
+			io.WriteString(buf, strings.Repeat(" ", maxLen-flag.aliasLength()+spacing))
+			io.WriteString(buf, flag.usage)
+		}
 	}
 }
 
@@ -124,7 +126,10 @@ func (h *Help) writeSubcommands(buf *bytes.Buffer) {
 	for _, cmd := range cmds {
 		io.WriteString(buf, "\n")
 		io.WriteString(buf, cmd.name)
-		io.WriteString(buf, strings.Repeat(" ", maxLen-len(cmd.name)+spacing))
-		io.WriteString(buf, cmd.short)
+
+		if len(cmd.short) > 0 {
+			io.WriteString(buf, strings.Repeat(" ", maxLen-len(cmd.name)+spacing))
+			io.WriteString(buf, cmd.short)
+		}
 	}
 }
