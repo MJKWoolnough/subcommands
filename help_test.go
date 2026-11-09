@@ -1,6 +1,7 @@
 package subcommands
 
 import (
+	"io"
 	"os"
 	"testing"
 )
@@ -19,6 +20,12 @@ func TestHelpWriteTo(t *testing.T) {
 			nil,
 			nil,
 			"Usage: " + exe,
+		},
+		{
+			func(*Commands) {},
+			nil,
+			io.EOF,
+			"Error: EOF\n\nUsage: " + exe,
 		},
 	} {
 		var c Commands
